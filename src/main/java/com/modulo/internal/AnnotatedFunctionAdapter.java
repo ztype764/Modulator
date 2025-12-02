@@ -2,6 +2,14 @@ package com.modulo.internal;
 
 import java.lang.reflect.Method;
 
+/**
+ * Adapter class to adapt annotated functions to the {@link CalcFunction}
+ * interface.
+ * <p>
+ * This class wraps an object annotated with {@link Function} and exposes it as
+ * a {@link CalcFunction}.
+ * </p>
+ */
 public class AnnotatedFunctionAdapter implements CalcFunction {
 
     private final String name;
@@ -9,6 +17,14 @@ public class AnnotatedFunctionAdapter implements CalcFunction {
     private final Object instance;
     private final Method runMethod;
 
+    /**
+     * Constructs a new {@code AnnotatedFunctionAdapter}.
+     *
+     * @param obj  The object instance containing the function logic.
+     * @param meta The {@link Function} annotation metadata.
+     * @throws RuntimeException If the object does not have a {@code run(double)}
+     *                          method.
+     */
     public AnnotatedFunctionAdapter(Object obj, Function meta) {
         this.name = meta.name();
         this.insert = meta.insert();
@@ -21,10 +37,25 @@ public class AnnotatedFunctionAdapter implements CalcFunction {
         }
     }
 
-    @Override public String getName() { return name; }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() {
+        return name;
+    }
 
-    @Override public String getInsertText() { return insert; }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getInsertText() {
+        return insert;
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double evaluate(double x) {
         try {

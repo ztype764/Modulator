@@ -1,6 +1,5 @@
 package com.modulo.internal;
 
-
 /**
  * <p>MIT License</p>
 
@@ -25,9 +24,42 @@ package com.modulo.internal;
  SOFTWARE.</p>
 
  **/
+/**
+ * Interface representing a calculator function.
+ * <p>
+ * Implementations of this interface define a function that can be used in the
+ * calculator.
+ * </p>
+ */
 public interface CalcFunction {
-    //make sure the Name contains the text. e.g. name sin will not work with sint( ,but sint will work
-    String getName();        // Button label + function identifier
-    String getInsertText();  // Inserted text (ex: "sin(")
+    // make sure the Name contains the text. e.g. name sin will not work with sint(
+    // ,but sint will work
+    /**
+     * Gets the name of the function.
+     * <p>
+     * This name is displayed on the calculator button.
+     * </p>
+     *
+     * @return The function name.
+     */
+    String getName(); // Button label + function identifier
+
+    /**
+     * Gets the text to insert into the input field when the function button is
+     * clicked.
+     * <p>
+     * For example, for a sine function, this might be "sin(".
+     * </p>
+     *
+     * @return The insert text.
+     */
+    String getInsertText(); // Inserted text (ex: "sin(")
+
+    /**
+     * Evaluates the function for a given input value.
+     *
+     * @param x The input value.
+     * @return The result of the function.
+     */
     double evaluate(double x);
 }

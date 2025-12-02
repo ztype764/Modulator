@@ -1,6 +1,5 @@
 package com.modulo.Registry;
 
-
 import com.modulo.internal.AnnotatedFunctionAdapter;
 import com.modulo.internal.CalcFunction;
 import com.modulo.internal.Function;
@@ -9,6 +8,7 @@ import org.reflections.Reflections;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 /**
  * <p>MIT License</p>
 
@@ -33,15 +33,38 @@ import java.util.Set;
  SOFTWARE.</p>
 
  **/
+/**
+ * Registry for managing and loading calculator functions.
+ * <p>
+ * This class handles the discovery and registration of both
+ * {@link CalcFunction} implementations
+ * and methods annotated with {@link Function}.
+ * </p>
+ */
 public class FunctionRegistry {
 
     private static final List<CalcFunction> functions = new ArrayList<>();
 
+    /**
+     * Retrieves the list of registered calculator functions.
+     *
+     * @return A list of {@link CalcFunction} instances.
+     */
     public static List<CalcFunction> getFunctions() {
         return functions;
     }
 
-    // Auto-scan all classes in com.modulo.functions
+    /**
+     * Scans the {@code com.modulo.functions} package and loads all available
+     * functions.
+     * <p>
+     * It supports two types of function definitions:
+     * <ul>
+     * <li>Classes implementing {@link CalcFunction}</li>
+     * <li>Classes annotated with {@link Function}</li>
+     * </ul>
+     * </p>
+     */
     public static void loadFunctions() {
         try {
             Reflections reflections = new Reflections("com.modulo.functions");
@@ -61,7 +84,7 @@ public class FunctionRegistry {
                 Function meta = cls.getAnnotation(Function.class);
                 functions.add(new AnnotatedFunctionAdapter(obj, meta));
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.err.println("Failed loading plugins: " + e.getMessage());
         }
     }

@@ -1,6 +1,5 @@
 package com.modulo;
 
-
 import com.modulo.Registry.FunctionRegistry;
 import com.modulo.internal.CalcFunction;
 
@@ -36,6 +35,15 @@ import java.util.List;
  SOFTWARE.</p>
 
  **/
+/**
+ * The main entry point for the Live Calculator application.
+ * <p>
+ * This class extends {@link JFrame} and provides the graphical user interface
+ * for the calculator.
+ * It handles user input, button interactions, and displays the calculation
+ * results in real-time.
+ * </p>
+ */
 public class LiveCalculator extends JFrame {
 
     private final JTextField inputField;
@@ -52,11 +60,17 @@ public class LiveCalculator extends JFrame {
             "4", "5", "6", "*",
             "1", "2", "3", "-",
             "0", ".", "(", ")",
-            "C", "=", "+"
-    );
+            "C", "=", "+");
 
     private final List<CalcFunction> functions = new ArrayList<>();
 
+    /**
+     * Constructs a new {@code LiveCalculator} instance.
+     * <p>
+     * Initializes the UI components, sets up the layout, and loads the calculator
+     * functions.
+     * </p>
+     */
     public LiveCalculator() {
         setTitle("Live Calculator");
         setSize(420, 600);
@@ -72,7 +86,10 @@ public class LiveCalculator extends JFrame {
         inputField.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
 
         inputField.addKeyListener(new KeyAdapter() {
-            @Override public void keyReleased(KeyEvent e) { calculateLive(); }
+            @Override
+            public void keyReleased(KeyEvent e) {
+                calculateLive();
+            }
         });
 
         inputField.addActionListener(e -> calculateFinal());
@@ -92,8 +109,14 @@ public class LiveCalculator extends JFrame {
         prevPageBtn = new JButton("◀");
         nextPageBtn = new JButton("▶");
 
-        prevPageBtn.addActionListener(e -> { currentPage--; refreshButtons(); });
-        nextPageBtn.addActionListener(e -> { currentPage++; refreshButtons(); });
+        prevPageBtn.addActionListener(e -> {
+            currentPage--;
+            refreshButtons();
+        });
+        nextPageBtn.addActionListener(e -> {
+            currentPage++;
+            refreshButtons();
+        });
 
         bottom.add(prevPageBtn, BorderLayout.WEST);
         bottom.add(nextPageBtn, BorderLayout.EAST);
@@ -104,21 +127,29 @@ public class LiveCalculator extends JFrame {
         FunctionRegistry.loadFunctions();
         functions.addAll(FunctionRegistry.getFunctions());
 
-
         refreshButtons();
 
         SwingUtilities.invokeLater(inputField::requestFocusInWindow);
         setVisible(true);
     }
 
+    /**
+     * Refreshes the buttons displayed in the button panel based on the current
+     * page.
+     * <p>
+     * This method calculates which buttons to show and updates the UI accordingly.
+     * </p>
+     */
     private void refreshButtons() {
 
         List<JButton> allButtons = getJButtons();
 
         int BUTTONS_PER_PAGE = 20;
         int totalPages = (int) Math.ceil(allButtons.size() / (double) BUTTONS_PER_PAGE);
-        if (currentPage < 0) currentPage = 0;
-        if (currentPage >= totalPages) currentPage = totalPages - 1;
+        if (currentPage < 0)
+            currentPage = 0;
+        if (currentPage >= totalPages)
+            currentPage = totalPages - 1;
 
         buttonPanel.removeAll();
         int start = currentPage * BUTTONS_PER_PAGE;
@@ -135,6 +166,12 @@ public class LiveCalculator extends JFrame {
         buttonPanel.repaint();
     }
 
+    /**
+     * Generates a list of all available calculator buttons.
+     *
+     * @return A list of {@link JButton} objects representing base operations and
+     *         loaded functions.
+     */
     private List<JButton> getJButtons() {
         List<JButton> allButtons = new ArrayList<>();
 
@@ -156,11 +193,22 @@ public class LiveCalculator extends JFrame {
         return allButtons;
     }
 
+    /**
+     * Appends a function's insert text to the input field and triggers a live
+     * calculation.
+     *
+     * @param func The {@link CalcFunction} to append.
+     */
     private void appendFunction(CalcFunction func) {
         inputField.setText(inputField.getText() + func.getInsertText());
         calculateLive();
     }
 
+    /**
+     * Handles button clicks for base calculator operations.
+     *
+     * @param text The text of the button clicked.
+     */
     private void handleButton(String text) {
         switch (text) {
             case "C":
@@ -178,7 +226,13 @@ public class LiveCalculator extends JFrame {
         }
     }
 
-
+    /**
+     * Performs a live calculation based on the current text in the input field.
+     * <p>
+     * Updates the result label with the calculated value or an ellipsis if the
+     * expression is incomplete.
+     * </p>
+     */
     private void calculateLive() {
         String expr = inputField.getText().trim();
         if (expr.isEmpty()) {
@@ -193,10 +247,16 @@ public class LiveCalculator extends JFrame {
         }
     }
 
-
+    /**
+     * Performs the final calculation and updates the input field with the result.
+     * <p>
+     * This is typically triggered by the equals button or pressing Enter.
+     * </p>
+     */
     private void calculateFinal() {
         String expr = inputField.getText().trim();
-        if (expr.isEmpty()) return;
+        if (expr.isEmpty())
+            return;
         try {
             double result = evaluate(expr);
             inputField.setText(format(result));
@@ -206,16 +266,30 @@ public class LiveCalculator extends JFrame {
         }
     }
 
+    /**
+     * Evaluates a mathematical expression string.
+     *
+     * @param expr The expression to evaluate.
+     * @return The result of the evaluation.
+     */
     private double evaluate(String expr) {
         return parseAddSubtract(expr.replaceAll("\\s+", ""));
     }
 
+    /**
+     * Parses and evaluates addition and subtraction operations.
+     *
+     * @param expr The expression to parse.
+     * @return The result of the addition/subtraction.
+     */
     private double parseAddSubtract(String expr) {
         int depth = 0;
         for (int i = expr.length() - 1; i >= 0; i--) {
             char c = expr.charAt(i);
-            if (c == ')') depth++;
-            if (c == '(') depth--;
+            if (c == ')')
+                depth++;
+            if (c == '(')
+                depth--;
             if (depth == 0 && i > 0 && (c == '+' || c == '-')) {
                 return c == '+'
                         ? parseAddSubtract(expr.substring(0, i)) + parseMultiply(expr.substring(i + 1))
@@ -225,12 +299,20 @@ public class LiveCalculator extends JFrame {
         return parseMultiply(expr);
     }
 
+    /**
+     * Parses and evaluates multiplication and division operations.
+     *
+     * @param expr The expression to parse.
+     * @return The result of the multiplication/division.
+     */
     private double parseMultiply(String expr) {
         int depth = 0;
         for (int i = expr.length() - 1; i >= 0; i--) {
             char c = expr.charAt(i);
-            if (c == ')') depth++;
-            if (c == '(') depth--;
+            if (c == ')')
+                depth++;
+            if (c == '(')
+                depth--;
             if (depth == 0 && i > 0 && (c == '*' || c == '/')) {
                 return c == '*'
                         ? parseMultiply(expr.substring(0, i)) * parseUnary(expr.substring(i + 1))
@@ -240,12 +322,26 @@ public class LiveCalculator extends JFrame {
         return parseUnary(expr);
     }
 
+    /**
+     * Parses and evaluates unary operations (positive/negative signs).
+     *
+     * @param expr The expression to parse.
+     * @return The result of the unary operation.
+     */
     private double parseUnary(String expr) {
-        if (expr.startsWith("+")) return parseUnary(expr.substring(1));
-        if (expr.startsWith("-")) return -parseUnary(expr.substring(1));
+        if (expr.startsWith("+"))
+            return parseUnary(expr.substring(1));
+        if (expr.startsWith("-"))
+            return -parseUnary(expr.substring(1));
         return parseFunction(expr);
     }
 
+    /**
+     * Parses and evaluates custom functions.
+     *
+     * @param expr The expression to parse.
+     * @return The result of the function evaluation.
+     */
     private double parseFunction(String expr) {
         for (CalcFunction f : functions) {
             String name = f.getName();
@@ -260,7 +356,12 @@ public class LiveCalculator extends JFrame {
         return parsePrimary(expr);
     }
 
-
+    /**
+     * Parses and evaluates primary expressions (numbers and parentheses).
+     *
+     * @param expr The expression to parse.
+     * @return The result of the primary expression.
+     */
     private double parsePrimary(String expr) {
         if (expr.startsWith("(") && expr.endsWith(")")) {
             return evaluate(expr.substring(1, expr.length() - 1));
@@ -268,12 +369,23 @@ public class LiveCalculator extends JFrame {
         return Double.parseDouble(expr);
     }
 
+    /**
+     * Formats a double value into a string, removing unnecessary decimal places.
+     *
+     * @param n The number to format.
+     * @return The formatted string.
+     */
     private String format(double n) {
-        if (n == (long) n) return String.valueOf((long) n);
+        if (n == (long) n)
+            return String.valueOf((long) n);
         return ("" + n).replaceAll("0+$", "").replaceAll("\\.$", "");
     }
 
-
+    /**
+     * The main method to launch the application.
+     *
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(LiveCalculator::new);
     }
