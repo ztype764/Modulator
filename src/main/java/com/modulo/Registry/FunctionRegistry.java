@@ -1,7 +1,9 @@
 package com.modulo.Registry;
 
 
-import com.modulo.functions.CalcFunction;
+import com.modulo.internal.AnnotatedFunctionAdapter;
+import com.modulo.internal.CalcFunction;
+import com.modulo.internal.Function;
 import org.reflections.Reflections;
 
 import java.util.ArrayList;
@@ -43,14 +45,23 @@ public class FunctionRegistry {
     public static void loadFunctions() {
         try {
             Reflections reflections = new Reflections("com.modulo.functions");
-            Set<Class<? extends CalcFunction>> classes = reflections.getSubTypesOf(CalcFunction.class);
 
+            // Load old-style CalcFunction modules
+            Set<Class<? extends CalcFunction>> classes = reflections.getSubTypesOf(CalcFunction.class);
             for (Class<? extends CalcFunction> cls : classes) {
                 if (!cls.isInterface()) {
                     functions.add(cls.getDeclaredConstructor().newInstance());
                 }
             }
-        } catch (Exception e) {
+
+            // Load annotation-based modules
+            Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Function.class);
+            for (Class<?> cls : annotated) {
+                Object obj = cls.getDeclaredConstructor().newInstance();
+                Function meta = cls.getAnnotation(Function.class);
+                functions.add(new AnnotatedFunctionAdapter(obj, meta));
+            }
+        }catch (Exception e) {
             System.err.println("Failed loading plugins: " + e.getMessage());
         }
     }

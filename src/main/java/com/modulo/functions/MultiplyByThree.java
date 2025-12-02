@@ -1,12 +1,14 @@
 package com.modulo.functions;
 
+import com.modulo.internal.Function;
 
 /**
  * Example Module to multiply by three
  *
  */
-public class MultiplyByThree implements CalcFunction{
-    @Override public String getName() { return "*3"; }
-    @Override public String getInsertText() { return "*3"; }
-    @Override public double evaluate(double x) { return x * 3; }
+@Function(name = "*3",insert = "*3")
+public class MultiplyByThree {
+    public double run(double x) {
+        return x * 3;
+    }
 }

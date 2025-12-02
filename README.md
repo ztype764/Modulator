@@ -101,12 +101,26 @@ java -jar target/modulator-1.0-SNAPSHOT-jar-with-dependencies.jar
 ```java
 package com.modulo.functions;
 
-public class CubeFunction implements CalcFunction {
-    public CubeFunction() {}
+import com.modulo.internal.CalcFunction;
 
-    @Override public String getName() { return "cube"; }
-    @Override public String getInsertText() { return "cube("; }
-    @Override public double evaluate(double x) { return x * x * x; }
+public class CubeFunction implements CalcFunction {
+    public CubeFunction() {
+    }
+
+    @Override
+    public String getName() {
+        return "cube";
+    }
+
+    @Override
+    public String getInsertText() {
+        return "cube(";
+    }
+
+    @Override
+    public double evaluate(double x) {
+        return x * x * x;
+    }
 }
 ```
 
