@@ -172,7 +172,7 @@ com.modulo.functions
 
 2. Class must be compiled into:
 ```
-target/classes/modulo/functions/
+target/classes/com/modulo/functions/
 ```
 
 3. Must have a public no-arg constructor:
@@ -209,6 +209,9 @@ Module developers may:
 Core maintainers may update:
 - LiveCalculator.java  
 - FunctionRegistry.java  
+- AnnotatedFunctionAdapter.java
+- CalcFunction.java
+- Function.java
 
 
 ---
