@@ -156,6 +156,9 @@ All classes implementing `CalcFunction` and having a public no-arg constructor a
 
 No edits to base files are ever required.
 
+- Functions need to defined by '(' after their name in the Text Field e.g. cube(
+- Calculations need a Math Operator in their Text e.g. '*3'
+
 ---
 
 ## ⚠ Troubleshooting
