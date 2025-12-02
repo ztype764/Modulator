@@ -7,7 +7,7 @@ import com.modulo.internal.Function;
  */
 
 @Function(name = "NPrime", insert = "NPrime(")
-public class    NPrime {
+public class NPrime {
 
     public double run(double x) {
         int n = (int) x;
