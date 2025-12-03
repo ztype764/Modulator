@@ -2,8 +2,11 @@ package com.modulo;
 
 import com.modulo.Registry.FunctionRegistry;
 import com.modulo.internal.CalcFunction;
+import com.modulo.internal.ConfigLoader;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -72,58 +75,90 @@ public class LiveCalculator extends JFrame {
      * </p>
      */
     public LiveCalculator() {
-        setTitle("Live Calculator");
-        setSize(420, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new BorderLayout(10, 10));
+        String title = ConfigLoader.getString("ui.window.title");
+        int width = ConfigLoader.getInt("ui.window.width");
+        int height = ConfigLoader.getInt("ui.window.height");
 
+        setTitle(title);
+        setSize(width, height);
+
+        Color bg = Color.decode(ConfigLoader.getColorHex("ui.colors.background"));
+        Color keypadBG = Color.decode(ConfigLoader.getColorHex("ui.colors.keypad"));
+
+        getContentPane().setBackground(bg);
+
+        // --- TOP PANEL ---
         JPanel top = new JPanel(new BorderLayout(10, 10));
-        top.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        top.setBackground(new Color(250, 250, 252));
+        top.setBorder(new EmptyBorder(20, 20, 5, 20));
 
+        // Input field - glass style
         inputField = new JTextField();
-        inputField.setFont(new Font("Monaco", Font.PLAIN, 32));
+        inputField.setFont(new Font("Inter", Font.PLAIN, 32));
         inputField.setHorizontalAlignment(JTextField.RIGHT);
-        inputField.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+
+        inputField.setBackground(new Color(255, 255, 255));
+        inputField.setBorder(new LineBorder(new Color(220, 220, 220), 2, true));
+        inputField.setMargin(new Insets(12, 12, 12, 12));
+        inputField.setOpaque(true);
 
         inputField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                calculateLive();
-            }
+            @Override public void keyReleased(KeyEvent e) { calculateLive(); }
         });
-
         inputField.addActionListener(e -> calculateFinal());
 
-        resultLabel = new JLabel("Result: 0", SwingConstants.CENTER);
-        resultLabel.setFont(new Font("Arial", Font.BOLD, 22));
-        resultLabel.setForeground(new Color(0, 120, 0));
+        // Result label
+        String defaultResult = ConfigLoader.getString("ui.labels.defaultResult");
+        resultLabel = new JLabel(defaultResult, SwingConstants.RIGHT);
 
-        top.add(inputField, BorderLayout.CENTER);
-        top.add(resultLabel, BorderLayout.SOUTH);
+        resultLabel.setFont(new Font("Inter", Font.BOLD, 26));
+        resultLabel.setForeground(new Color(60, 60, 60));
+        resultLabel.setBorder(new EmptyBorder(0, 10, 0, 10));
+        resultLabel.setFont(new Font("Inter", Font.BOLD, 22));
 
+        JPanel displayPanel = new JPanel(new GridLayout(2, 1));
+        displayPanel.setBackground(new Color(255, 255, 255));
+        displayPanel.setBorder(new LineBorder(new Color(230, 230, 230), 2, true));
+        displayPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
+        displayPanel.add(inputField);
+        displayPanel.add(resultLabel);
+
+        top.add(displayPanel, BorderLayout.CENTER);
         add(top, BorderLayout.NORTH);
 
+        // --- BUTTON PANEL ---
         JPanel bottom = new JPanel(new BorderLayout());
-        buttonPanel = new JPanel(new GridLayout(5, 4, 10, 10));
+        bottom.setBackground(keypadBG);
 
-        prevPageBtn = new JButton("◀");
-        nextPageBtn = new JButton("▶");
+        buttonPanel = new JPanel(new GridLayout(5, 4, 14, 14));
+        buttonPanel.setBorder(new EmptyBorder(5, 20, 20, 20));
 
-        prevPageBtn.addActionListener(e -> {
-            currentPage--;
-            refreshButtons();
-        });
-        nextPageBtn.addActionListener(e -> {
-            currentPage++;
-            refreshButtons();
-        });
+        buttonPanel.setBackground(keypadBG);
 
-        bottom.add(prevPageBtn, BorderLayout.WEST);
-        bottom.add(nextPageBtn, BorderLayout.EAST);
+
+
+
+        // Pagination buttons
+        prevPageBtn = modernButton("◀",false);
+        nextPageBtn = modernButton("▶",false);
+        prevPageBtn.setFont(new Font("Inter", Font.BOLD, 18));
+        nextPageBtn.setFont(new Font("Inter", Font.BOLD, 18));
+
+        prevPageBtn.addActionListener(e -> { currentPage--; refreshButtons(); });
+        nextPageBtn.addActionListener(e -> { currentPage++; refreshButtons(); });
+
+        JPanel pager = new JPanel(new BorderLayout());
+        pager.setBorder(new EmptyBorder(5, 20, 5, 20));
+        pager.setBackground(keypadBG);
+        pager.add(prevPageBtn, BorderLayout.WEST);
+        pager.add(nextPageBtn, BorderLayout.EAST);
+
+        bottom.add(pager, BorderLayout.NORTH);
         bottom.add(buttonPanel, BorderLayout.CENTER);
 
         add(bottom, BorderLayout.CENTER);
 
+        // Load functions
         FunctionRegistry.loadFunctions();
         functions.addAll(FunctionRegistry.getFunctions());
 
@@ -132,6 +167,42 @@ public class LiveCalculator extends JFrame {
         SwingUtilities.invokeLater(inputField::requestFocusInWindow);
         setVisible(true);
     }
+
+
+    private JButton modernButton(String label,boolean borders) {
+        JButton btn = new JButton(label);
+        btn.setFont(new Font("Inter", Font.BOLD, 20));
+        btn.setFocusPainted(false);
+        btn.setForeground(Color.decode(ConfigLoader.getColorHex("ui.colors.buttonText")));
+        btn.setBackground(Color.decode(ConfigLoader.getColorHex("ui.colors.buttonBackground")));
+
+
+        if(borders) {
+            btn.setBorder(new LineBorder(new Color(220,220,220), 1, true));
+            btn.setBorder(BorderFactory.createCompoundBorder(
+                    new LineBorder(new Color(220, 220, 220),1,true),
+                    new EmptyBorder(6, 6, 6, 6)
+            ));
+        }
+
+
+        btn.setOpaque(true);
+        btn.setMargin(new Insets(10, 10, 10, 10));
+
+        // Hover effect
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btn.setBackground(Color.decode(ConfigLoader.getColorHex("ui.colors.buttonHover")));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btn.setBackground(new Color(248, 248, 248));
+            }
+        });
+
+        return btn;
+    }
+
+
 
     /**
      * Refreshes the buttons displayed in the button panel based on the current
@@ -177,16 +248,16 @@ public class LiveCalculator extends JFrame {
 
         // Base buttons first
         for (String b : baseButtons) {
-            JButton btn = new JButton(b);
-            btn.setFont(new Font("Arial", Font.BOLD, 22));
+            JButton btn = modernButton(b,true);
+
             btn.addActionListener(e -> handleButton(b));
             allButtons.add(btn);
         }
 
         // Modular scientific buttons
         for (CalcFunction f : functions) {
-            JButton btn = new JButton(f.getName());
-            btn.setFont(new Font("Arial", Font.BOLD, 22));
+            JButton btn = modernButton(f.getName(),true);
+
             btn.addActionListener(e -> appendFunction(f));
             allButtons.add(btn);
         }
@@ -213,7 +284,7 @@ public class LiveCalculator extends JFrame {
         switch (text) {
             case "C":
                 inputField.setText("");
-                resultLabel.setText("Result: 0");
+                resultLabel.setText("= 0");
                 break;
 
             case "=":
@@ -236,14 +307,14 @@ public class LiveCalculator extends JFrame {
     private void calculateLive() {
         String expr = inputField.getText().trim();
         if (expr.isEmpty()) {
-            resultLabel.setText("Result: 0");
+            resultLabel.setText("= 0");
             return;
         }
         try {
             double val = evaluate(expr);
-            resultLabel.setText("Result: " + format(val));
+            resultLabel.setText("= " + format(val));
         } catch (Exception e) {
-            resultLabel.setText("Result: …");
+            resultLabel.setText("= …");
         }
     }
 
@@ -260,7 +331,7 @@ public class LiveCalculator extends JFrame {
         try {
             double result = evaluate(expr);
             inputField.setText(format(result));
-            resultLabel.setText("Result: " + format(result));
+            resultLabel.setText("= " + format(result));
         } catch (Exception e) {
             resultLabel.setText("Error");
         }

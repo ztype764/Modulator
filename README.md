@@ -1,27 +1,27 @@
 # 🔢 Modulator — Modular Scientific Calculator (Java + Swing + Plugin Architecture)
+
 <img width="424" height="603" alt="Screenshot 2025-12-01 at 4 17 40 PM" src="https://github.com/user-attachments/assets/716c1378-4749-4dc1-8bac-cdd7ea8e98a2" />
 <img width="424" height="603" alt="Screenshot 2025-12-01 at 4 18 27 PM" src="https://github.com/user-attachments/assets/21da660d-098b-4b06-bba2-896872c05d9e" />
 
-
-
-
-Modulator is a **fully extensible, plugin-powered scientific calculator** built in Java.
+Modulator is a **fully extensible, plugin-powered scientific calculator** built in Java.  
 External developers can add new scientific functions **without modifying any base code**.
 
 The core calculator supports:
+
 - Live expression evaluation (Google Calculator style)
 - Parentheses, unary operations, operator precedence
 - Modular scientific functions (sin, cos, log, sqrt…)
 - Auto-generated UI buttons
 - Button paging system (auto-fits new plugins)
 - Auto-discovery of new functions at runtime using classpath scanning
+- Annotation-based function modules (no interfaces needed)
 
 ---
 
 ## ✨ Features
 
 ### ✔ Live Calculation
-Expressions update in real time as the user types:
+Real-time evaluation as the user types:
 
 ```
 5 + 3 * 2
@@ -29,23 +29,65 @@ Expressions update in real time as the user types:
 ```
 
 ### ✔ Plugin Architecture
-Developers can add functions like:
+Drop in new modules → Calculator picks them up automatically.
 
-```
-cube(2)
-log(100)
-sin(45)
-```
-
-Simply by adding a class that implements `CalcFunction`.
-
-### ✔ UI Auto-Updates
-Every new module automatically creates a new button.  
-Button pages expand dynamically.
+### ✔ Annotation-Powered Functions
+Developers can now add functions using **only a class + an annotation**, no interface required.
 
 ---
 
-## 📦 Project Structure
+### Example: Creating a function using only an annotation
+
+```java
+package com.modulo.functions;
+
+import com.modulo.internal.Function;
+
+@Function(name = "NPrime", insert = "NPrime(")
+public class NPrime {
+
+    public double run(double x) {
+        int n = (int) x;
+        if (n <= 0) return 2;
+
+        int count = 0;
+        int num = 1;
+
+        while (count < n) {
+            num++;
+            if (isPrime(num)) count++;
+        }
+
+        return num;
+    }
+
+    private boolean isPrime(int n) {
+        if (n < 2) return false;
+
+        for (int i = 2; i <= Math.sqrt(n); i++) {
+            if (n % i == 0) return false;
+        }
+
+        return true;
+    }
+}
+```
+
+Typing:
+
+```
+NPrime(5)
+```
+
+→ Returns:
+
+```
+11
+```
+
+---
+
+## 📦 Project Structure (Updated)
 
 ```
 modulator/
@@ -58,12 +100,13 @@ modulator/
             ├── com/
             │   └── modulo/
             │       ├── Registry/
-            │       │   └── FunctionRegistry.java     (Internal plugin loader)
-            │       │  
-            │       ├── internal 
+            │       │   └── FunctionRegistry.java
+            │       │
+            │       ├── internal/
             │       │   ├── AnnotatedFunctionAdapter.java
             │       │   ├── CalcFunction.java
-            │       │   └── Function.java
+            │       │   ├── Function.java
+            │       │   └── FunctionUtils.java
             │       │
             │       ├── functions/
             │       │   ├── SinFunction.java
@@ -71,158 +114,94 @@ modulator/
             │       │   ├── TanFunction.java
             │       │   ├── SqrtFunction.java
             │       │   ├── LogFunction.java
-            │       │   └── (external developers add modules here)
-            │       └── LiveCalculator.java           (Base UI + parser)
+            │       │   ├── NPrime.java
+            │       │   └── (your modules go here)
+            │       │
+            │       └── LiveCalculator.java
+            │
             └── resources/
 ```
 
 ---
 
-## 🚀 Running the Calculator
+## 🧩 Creating Modules
 
-### Build
-```bash
-mvn clean package
-```
-
-### Run (classpath)
-```bash
-java -cp target/classes:<dependencies> modulo.LiveCalculator
-```
-
-### Run (fat JAR)
-```bash
-java -jar target/modulator-1.0-SNAPSHOT-jar-with-dependencies.jar
-```
-
----
-
-## 🧩 Creating a New Function Module
-
-
-### Step 1 — Create a class in `modulo.functions`
+### 1. Classic Interface-Based Module
 
 ```java
-package com.modulo.functions;
-
-import com.modulo.internal.CalcFunction;
-
 public class CubeFunction implements CalcFunction {
-    public CubeFunction() {
-    }
+    public CubeFunction() {}
 
     @Override
-    public String getName() {
-        return "cube";
-    }
+    public String getName() { return "cube"; }
 
     @Override
-    public String getInsertText() {
-        return "cube(";
-    }
+    public String getInsertText() { return "cube("; }
 
     @Override
-    public double evaluate(double x) {
+    public double evaluate(double x) { return x * x * x; }
+}
+```
+
+### 2. Annotation-Based Module (NEW)
+
+```java
+@Function(name="cube", insert="cube(")
+public class Cube {
+    public double run(double x) {
         return x * x * x;
     }
 }
 ```
 
-### Step 2 — Build the project  
-### Step 3 — Done. The new function loads automatically:
-
-- A new cube button appears  
-- Typing `cube(3)` evaluates to `27`  
-- Shown in paging system if needed
-
 ---
 
-## 🔍 How Automatic Module Loading Works
+## 🔍 How Module Loading Works
 
-We use the Reflections library to scan the classpath:
+Modulator automatically:
 
-```java
-Reflections reflections = new Reflections("modulo.functions");
-Set<Class<? extends CalcFunction>> functions =
-    reflections.getSubTypesOf(CalcFunction.class);
-```
+- Scans for classes implementing `CalcFunction`
+- Scans for `@Function` annotated classes
+- Wraps annotated classes using `AnnotatedFunctionAdapter`
+- Adds UI button
+- Adds parser support
+- Ensures modules never touch `LiveCalculator.java`
 
-All classes implementing `CalcFunction` and having a public no-arg constructor are:
-
-✔ Instantiated  
-✔ Added to UI  
-✔ Added to parser  
-✔ Shown automatically  
-
-No edits to base files are ever required.
-
-- Functions need to defined by '(' after their name in the Text Field e.g. cube(
-- Calculations need a Math Operator in their Text e.g. '*3'
+Zero modification to core code.
 
 ---
 
 ## ⚠ Troubleshooting
 
-### ❗ Modules not loading?
+### Annotated functions not loading?
 
-1. Package must be exactly:
+1. Must be inside:
 ```
 com.modulo.functions
 ```
 
-2. Class must be compiled into:
+2. Must contain:
 ```
-target/classes/com/modulo/functions/
-```
-
-3. Must have a public no-arg constructor:
-```java
-public CubeFunction() {}
+public double run(double x)
 ```
 
-4. FunctionRegistry must point to correct package:
-```java
-new Reflections("com.modulo.functions");
+3. Must have:
+```
+@Function(...)
 ```
 
-### ❗ SLF4J "NOP" warning  
-Safe to ignore — Reflections works without logging dependency.
+4. Must have a no-arg constructor.
+
+### SLF4J Warning
+Safe to ignore.
 
 ---
 
 ## 🛠 Built With
-- Java 17+  
-- Swing (UI)  
-- Maven  
-- Reflections  
-- ByteBuddy + Javassist  
 
----
-
-## 🤝 Contributing
-
-Module developers may:
-- Add new scientific functions  
-- Add symbolic math operations  
-- Extend parser capabilities using plugin models  
-
-Core maintainers may update:
-- LiveCalculator.java  
-- FunctionRegistry.java  
-- AnnotatedFunctionAdapter.java
-- CalcFunction.java
-- Function.java
-
-
----
-
-## 📄 License
-This project is free to use, modify, and integrate in commercial or personal projects.
-
----
-
-## Planned Stuff
-- Hot-reload (no restart needed)  
-- Module metadata (name, version, author)  
-- Categories (Trig, Logic, Algebra)  
-- Graphing calculator module  
+- Java 17+
+- Swing
+- Maven
+- Reflections
+- ByteBuddy
+- Javassist

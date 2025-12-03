@@ -1,0 +1,22 @@
+application:
+  name: "Modulator"
+
+ui:
+  window:
+    title: "Modulator"
+    width: 420
+    height: 660
+
+  colors:
+    background: "#FAFAFC"
+    keypad: "#F2F2F4"
+    buttonBackground: "#F8F8F8"
+    buttonHover: "#EBEBEB"
+    buttonText: "#282828"
+
+  labels:
+    defaultResult: "= 0"
+
+  layout:
+    buttonGap: 14
+    borderPadding: 20
