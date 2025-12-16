@@ -366,12 +366,6 @@ public class LiveCalculator extends JFrame {
      * @param expr The expression to evaluate.
      * @return The result of the evaluation.
      */
-    /**
-     * Evaluates a mathematical expression string.
-     *
-     * @param expr The expression to evaluate.
-     * @return The result of the evaluation.
-     */
     private double evaluate(String expr) {
         // Performance: Clean string once
         return parseAddSubtract(expr.replaceAll("\\s+", ""));
@@ -393,7 +387,7 @@ public class LiveCalculator extends JFrame {
                 depth--;
             if (depth == 0 && i > 0 && (c == '+' || c == '-')) {
                 // Handle scientific notation (e.g., 1.2E-3)
-                if (c == '-' && (i > 0 && (expr.charAt(i - 1) == 'E' || expr.charAt(i - 1) == 'e'))) {
+                if (c == '-' && ((expr.charAt(i - 1) == 'E' || expr.charAt(i - 1) == 'e'))) {
                     continue;
                 }
 
