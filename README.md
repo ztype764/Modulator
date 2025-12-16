@@ -1,7 +1,8 @@
 # 🔢 Modulator — Modular Scientific Calculator (Java + Swing + Plugin Architecture)
 
-<img width="424" height="603" alt="Screenshot 2025-12-01 at 4 17 40 PM" src="https://github.com/user-attachments/assets/716c1378-4749-4dc1-8bac-cdd7ea8e98a2" />
-<img width="424" height="603" alt="Screenshot 2025-12-01 at 4 18 27 PM" src="https://github.com/user-attachments/assets/21da660d-098b-4b06-bba2-896872c05d9e" />
+<img width="424" height="663" alt="Screenshot 2025-12-03 at 4 05 50 PM" src="https://github.com/user-attachments/assets/bd93505a-ecb2-46df-a927-045426e407e7" />
+<img width="425" height="663" alt="Screenshot 2025-12-03 at 4 07 34 PM" src="https://github.com/user-attachments/assets/031cb1d4-f120-4c6d-8f53-bdc4f383c13e" />
+
 
 Modulator is a **fully extensible, plugin-powered scientific calculator** built in Java.  
 External developers can add new scientific functions **without modifying any base code**.
