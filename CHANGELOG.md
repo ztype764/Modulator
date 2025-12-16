@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## 0.0.3 - Hot Reload & Multi-Arg Support
+
+### Added
+- **Hot Reload**: Added a reload button (⟳) to reload plugins without restarting the application.
+- **Multi-Argument Support**: Functions can now accept multiple arguments (e.g., `max(1, 2)`).
+- **New Functions**: Added `max(a,b)` and `min(a,b)` as example multi-argument functions.
+- **Robust Configuration**: Added fallback default configuration values if `application.yml` is missing.
+- **Error Handling**: Improved error messages for invalid syntax and unknown functions.
+
+### Fixed
+- **SLF4J Warning**: Resolved "No SLF4J providers found" warning by adding `slf4j-simple` dependency.
+
+### Changed
+- **CalcFunction Interface**: Updated `evaluate(double)` to `execute(double... args)` to support variable arguments.
+- **Performance**: Optimized expression parsing to clean whitespace only once.
+- **FunctionRegistry**: Added duplicate function name detection.
+
+---
+
 ## 0.0.2 - Visual Update+Common Configuration
 
 ### Added

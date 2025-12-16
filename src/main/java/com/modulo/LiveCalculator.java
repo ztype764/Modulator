@@ -15,27 +15,38 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * <p>MIT License</p>
+ * <p>
+ * MIT License
+ * </p>
  *
- * <p>Copyright (c) 2025 ztype764</p>
+ * <p>
+ * Copyright (c) 2025 ztype764
+ * </p>
  *
- * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
+ * <p>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:</p>
+ * furnished to do so, subject to the following conditions:
+ * </p>
  *
- * <p>The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.</p>
+ * <p>
+ * The above copyright notice and this permission notice shall be included in
+ * all
+ * copies or substantial portions of the Software.
+ * </p>
  *
- * <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * <p>
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.</p>
+ * SOFTWARE.
+ * </p>
  * <br>
  * <br>
  * The main entry point for the Live Calculator application.
@@ -62,8 +73,7 @@ public class LiveCalculator extends JFrame {
             "4", "5", "6", "*",
             "1", "2", "3", "-",
             "0", ".", "(", ")",
-            "C", "=", "+"
-    );
+            "C", "=", "+");
 
     private final List<CalcFunction> functions = new ArrayList<>();
 
@@ -103,7 +113,10 @@ public class LiveCalculator extends JFrame {
         inputField.setOpaque(true);
 
         inputField.addKeyListener(new KeyAdapter() {
-            @Override public void keyReleased(KeyEvent e) { calculateLive(); }
+            @Override
+            public void keyReleased(KeyEvent e) {
+                calculateLive();
+            }
         });
         inputField.addActionListener(e -> calculateFinal());
 
@@ -135,22 +148,37 @@ public class LiveCalculator extends JFrame {
 
         buttonPanel.setBackground(keypadBG);
 
-
-
-
         // Pagination buttons
-        prevPageBtn = modernButton("◀",false);
-        nextPageBtn = modernButton("▶",false);
+        prevPageBtn = modernButton("◀", false);
+        nextPageBtn = modernButton("▶", false);
         prevPageBtn.setFont(new Font("Inter", Font.BOLD, 18));
         nextPageBtn.setFont(new Font("Inter", Font.BOLD, 18));
 
-        prevPageBtn.addActionListener(e -> { currentPage--; refreshButtons(); });
-        nextPageBtn.addActionListener(e -> { currentPage++; refreshButtons(); });
+        prevPageBtn.addActionListener(e -> {
+            currentPage--;
+            refreshButtons();
+        });
+        nextPageBtn.addActionListener(e -> {
+            currentPage++;
+            refreshButtons();
+        });
 
         JPanel pager = new JPanel(new BorderLayout());
         pager.setBorder(new EmptyBorder(5, 20, 5, 20));
         pager.setBackground(keypadBG);
         pager.add(prevPageBtn, BorderLayout.WEST);
+
+        JButton reloadBtn = modernButton("⟳", false);
+        reloadBtn.setFont(new Font("Inter", Font.BOLD, 18));
+        reloadBtn.addActionListener(e -> {
+            FunctionRegistry.reload();
+            functions.clear();
+            functions.addAll(FunctionRegistry.getFunctions());
+            refreshButtons();
+            JOptionPane.showMessageDialog(this, "Plugins Reloaded!", "Hot Reload", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        pager.add(reloadBtn, BorderLayout.CENTER);
         pager.add(nextPageBtn, BorderLayout.EAST);
 
         bottom.add(pager, BorderLayout.NORTH);
@@ -168,23 +196,19 @@ public class LiveCalculator extends JFrame {
         setVisible(true);
     }
 
-
-    private JButton modernButton(String label,boolean borders) {
+    private JButton modernButton(String label, boolean borders) {
         JButton btn = new JButton(label);
         btn.setFont(new Font("Inter", Font.BOLD, 20));
         btn.setFocusPainted(false);
         btn.setForeground(Color.decode(ConfigLoader.getColorHex("ui.colors.buttonText")));
         btn.setBackground(Color.decode(ConfigLoader.getColorHex("ui.colors.buttonBackground")));
 
-
-        if(borders) {
-            btn.setBorder(new LineBorder(new Color(220,220,220), 1, true));
+        if (borders) {
+            btn.setBorder(new LineBorder(new Color(220, 220, 220), 1, true));
             btn.setBorder(BorderFactory.createCompoundBorder(
-                    new LineBorder(new Color(220, 220, 220),1,true),
-                    new EmptyBorder(6, 6, 6, 6)
-            ));
+                    new LineBorder(new Color(220, 220, 220), 1, true),
+                    new EmptyBorder(6, 6, 6, 6)));
         }
-
 
         btn.setOpaque(true);
         btn.setMargin(new Insets(10, 10, 10, 10));
@@ -194,6 +218,7 @@ public class LiveCalculator extends JFrame {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btn.setBackground(Color.decode(ConfigLoader.getColorHex("ui.colors.buttonHover")));
             }
+
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 btn.setBackground(new Color(248, 248, 248));
             }
@@ -201,8 +226,6 @@ public class LiveCalculator extends JFrame {
 
         return btn;
     }
-
-
 
     /**
      * Refreshes the buttons displayed in the button panel based on the current
@@ -248,7 +271,7 @@ public class LiveCalculator extends JFrame {
 
         // Base buttons first
         for (String b : baseButtons) {
-            JButton btn = modernButton(b,true);
+            JButton btn = modernButton(b, true);
 
             btn.addActionListener(e -> handleButton(b));
             allButtons.add(btn);
@@ -256,7 +279,7 @@ public class LiveCalculator extends JFrame {
 
         // Modular scientific buttons
         for (CalcFunction f : functions) {
-            JButton btn = modernButton(f.getName(),true);
+            JButton btn = modernButton(f.getName(), true);
 
             btn.addActionListener(e -> appendFunction(f));
             allButtons.add(btn);
@@ -343,7 +366,14 @@ public class LiveCalculator extends JFrame {
      * @param expr The expression to evaluate.
      * @return The result of the evaluation.
      */
+    /**
+     * Evaluates a mathematical expression string.
+     *
+     * @param expr The expression to evaluate.
+     * @return The result of the evaluation.
+     */
     private double evaluate(String expr) {
+        // Performance: Clean string once
         return parseAddSubtract(expr.replaceAll("\\s+", ""));
     }
 
@@ -362,6 +392,11 @@ public class LiveCalculator extends JFrame {
             if (c == '(')
                 depth--;
             if (depth == 0 && i > 0 && (c == '+' || c == '-')) {
+                // Handle scientific notation (e.g., 1.2E-3)
+                if (c == '-' && (i > 0 && (expr.charAt(i - 1) == 'E' || expr.charAt(i - 1) == 'e'))) {
+                    continue;
+                }
+
                 return c == '+'
                         ? parseAddSubtract(expr.substring(0, i)) + parseMultiply(expr.substring(i + 1))
                         : parseAddSubtract(expr.substring(0, i)) - parseMultiply(expr.substring(i + 1));
@@ -420,11 +455,39 @@ public class LiveCalculator extends JFrame {
 
             if (expr.startsWith(fnPattern) && expr.endsWith(")")) {
                 String inside = expr.substring(fnPattern.length(), expr.length() - 1);
-                double val = evaluate(inside);
-                return f.evaluate(val);
+
+                // Split arguments by comma, respecting parentheses
+                List<String> argsStr = splitArgs(inside);
+                double[] args = new double[argsStr.size()];
+
+                for (int i = 0; i < argsStr.size(); i++) {
+                    args[i] = parseAddSubtract(argsStr.get(i)); // Recursive call to top-level parser logic (minus
+                                                                // whitespace cleaning)
+                }
+
+                return f.execute(args);
             }
         }
         return parsePrimary(expr);
+    }
+
+    private List<String> splitArgs(String inside) {
+        List<String> args = new ArrayList<>();
+        int depth = 0;
+        int start = 0;
+        for (int i = 0; i < inside.length(); i++) {
+            char c = inside.charAt(i);
+            if (c == '(')
+                depth++;
+            if (c == ')')
+                depth--;
+            if (c == ',' && depth == 0) {
+                args.add(inside.substring(start, i));
+                start = i + 1;
+            }
+        }
+        args.add(inside.substring(start));
+        return args;
     }
 
     /**
@@ -435,9 +498,13 @@ public class LiveCalculator extends JFrame {
      */
     private double parsePrimary(String expr) {
         if (expr.startsWith("(") && expr.endsWith(")")) {
-            return evaluate(expr.substring(1, expr.length() - 1));
+            return parseAddSubtract(expr.substring(1, expr.length() - 1));
         }
-        return Double.parseDouble(expr);
+        try {
+            return Double.parseDouble(expr);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Invalid number: " + expr);
+        }
     }
 
     /**

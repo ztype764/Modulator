@@ -1,27 +1,38 @@
 package com.modulo.internal;
 
 /**
- * <p>MIT License</p>
+ * <p>
+ * MIT License
+ * </p>
  *
- * <p>Copyright (c) 2025 ztype764</p>
+ * <p>
+ * Copyright (c) 2025 ztype764
+ * </p>
  *
- * <p>Permission is hereby granted, free of charge, to any person obtaining a copy
+ * <p>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:</p>
+ * furnished to do so, subject to the following conditions:
+ * </p>
  *
- * <p>The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.</p>
+ * <p>
+ * The above copyright notice and this permission notice shall be included in
+ * all
+ * copies or substantial portions of the Software.
+ * </p>
  *
- * <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * <p>
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.</p>
+ * SOFTWARE.
+ * </p>
  * <br>
  * <br>
  * Interface representing a calculator function.
@@ -55,10 +66,20 @@ public interface CalcFunction {
     String getInsertText(); // Inserted text (ex: "sin(")
 
     /**
-     * Evaluates the function for a given input value.
+     * Executes the function with the given arguments.
      *
-     * @param x The input value.
+     * @param args The input arguments.
      * @return The result of the function.
      */
-    double evaluate(double x);
+    double execute(double... args);
+
+    /**
+     * Returns the number of arguments this function expects.
+     * Return -1 for variable number of arguments.
+     *
+     * @return The argument count.
+     */
+    default int getArgCount() {
+        return 1;
+    }
 }

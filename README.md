@@ -140,7 +140,7 @@ public class CubeFunction implements CalcFunction {
     public String getInsertText() { return "cube("; }
 
     @Override
-    public double evaluate(double x) { return x * x * x; }
+    public double execute(double... args) { return Math.pow(args[0], 3); }
 }
 ```
 
@@ -151,6 +151,17 @@ public class CubeFunction implements CalcFunction {
 public class Cube {
     public double run(double x) {
         return x * x * x;
+    }
+}
+```
+
+### 3. Multi-Argument Function (NEW)
+
+```java
+@Function(name="max", insert="max(")
+public class Max {
+    public double run(double a, double b) {
+        return Math.max(a, b);
     }
 }
 ```
@@ -183,7 +194,11 @@ com.modulo.functions
 
 2. Must contain:
 ```
+public double run(double... args)
+// OR
 public double run(double x)
+// OR
+public double run(double x, double y)
 ```
 
 3. Must have:

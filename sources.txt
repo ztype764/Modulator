@@ -1,0 +1,16 @@
+src/main/java/com/modulo/LiveCalculator.java
+src/main/java/com/modulo/internal/AnnotatedFunctionAdapter.java
+src/main/java/com/modulo/internal/CalcFunction.java
+src/main/java/com/modulo/internal/ConfigLoader.java
+src/main/java/com/modulo/internal/Function.java
+src/main/java/com/modulo/Registry/FunctionRegistry.java
+src/main/java/com/modulo/functions/MultiplyByThree.java
+src/main/java/com/modulo/functions/LogFunction.java
+src/main/java/com/modulo/functions/SqrtFunction.java
+src/main/java/com/modulo/functions/TanFunction.java
+src/main/java/com/modulo/functions/MinFunction.java
+src/main/java/com/modulo/functions/CosFunction.java
+src/main/java/com/modulo/functions/MaxFunction.java
+src/main/java/com/modulo/functions/NPrime.java
+src/main/java/com/modulo/functions/CubeFunction.java
+src/main/java/com/modulo/functions/SinFunction.java
